@@ -31,22 +31,21 @@ prompt = PromptTemplate(
     input_variables=["chat_history", "question"], template=template
 )
 
-
 llm = Ollama(model="mistral:7b")
 
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, 
-    output_key='answer')
+#memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, input_key="question", output_key='answer', max_memory_length=3)
 
 #todo: memoria de conversa
+
 conversation_chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
     retriever=retriever,
     verbose=True,
-    return_source_documents=True,
+    return_source_documents=False,
 )
 
 chain = (
     conversation_chain
-    | {"question":RunnablePassthrough()}
+    | {"question": RunnablePassthrough()}
     | StrOutputParser()
 )
