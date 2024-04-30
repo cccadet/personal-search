@@ -1,1 +1,0 @@
-[ ] Fazer uma busca por "resumo" do livro e com base na resposta, buscar item específico no vector-store
