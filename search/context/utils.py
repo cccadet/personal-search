@@ -3,6 +3,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.llms import Ollama
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
+from langchain.load import dumps, loads
 
 def retriver_context(embeddings_model='nomic-embed-text:v1.5',
                      path_books='./vector-store/books',
@@ -71,3 +72,48 @@ def search_context(retriever, prompt, question, model='llama3:8b', temperature=0
 
     final_answer = final_rag_chain.invoke({"question":question})
     return final_answer
+
+
+def generate_multi_query(prompt, model='llama3:8b'):
+    """
+    Generates multiple queries based on a given prompt using the Ollama model.
+
+    Args:
+        prompt (str): The prompt for generating queries.
+        model (str, optional): The Ollama model to use for query generation. 
+        Defaults to 'llama3:8b'.
+
+    Returns:
+        list: A list of generated queries.
+
+    """
+    llm = Ollama(model=model)
+
+    generate_queries = (
+        prompt
+        | llm.bind(stop=['<|eot_id|>'])
+        | StrOutputParser()
+        | (lambda x: x.split("\n"))
+    )
+
+    return generate_queries
+
+
+def get_unique_union(documents: list[list]):
+    """
+    Returns a list of unique documents by flattening the input list of lists,
+    converting each document to a string, and removing duplicates.
+
+    Args:
+        documents (list[list]): A list of lists containing documents.
+
+    Returns:
+        list: A list of unique documents.
+
+    """
+    # Flatten list of lists, and convert each Document to string
+    flattened_docs = [dumps(doc) for sublist in documents for doc in sublist]
+    # Get unique documents
+    unique_docs = list(set(flattened_docs))
+    # Return
+    return [loads(doc) for doc in unique_docs]
