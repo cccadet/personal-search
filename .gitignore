@@ -1,3 +1,4 @@
 *.pdf
 *.pyc
 images/
+vector-store/faiss/books/*
