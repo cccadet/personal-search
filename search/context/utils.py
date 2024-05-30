@@ -6,8 +6,9 @@ from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
 from langchain.load import dumps, loads
 
+
 def retriver_context(embeddings_model='nomic-embed-text:v1.5',
-                     path_books='./vector-store/books',
+                     path_books='./vector-store/faiss/books',
                      distance_metric='cos',
                      fetch_k=100,
                      k=3,
@@ -23,6 +24,7 @@ def retriver_context(embeddings_model='nomic-embed-text:v1.5',
         fetch_k (int): The number of documents to fetch before filtering. Default is 100.
         k (int): The number of documents to return. Default is 3.
         maximal_marginal_relevance (bool): Whether to use maximal marginal relevance for example selection. Default is False.
+        vector_store (str): The vector store to use. Default is 'faiss'.
 
     Returns:
         tuple: A tuple containing the retriever and the vector store.
@@ -43,7 +45,7 @@ def retriver_context(embeddings_model='nomic-embed-text:v1.5',
         retriever.search_kwargs["distance_metric"] = distance_metric
         # fetch_k: search method to set how many documents you want to fetch before filtering
         retriever.search_kwargs["fetch_k"] = fetch_k
-        # maximal_marginal_relevance: The MaxMarginalRelevanceExampleSelector selects 
+        # maximal_marginal_relevance: The MaxMarginalRelevanceExampleSelector selects
         # examples based on a combination of which examples are most similar to the inputs,
         # while also optimizing for diversity.
         retriever.search_kwargs["maximal_marginal_relevance"] = maximal_marginal_relevance

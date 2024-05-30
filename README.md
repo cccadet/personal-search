@@ -26,14 +26,12 @@ Personal project with the objective of training the development and use of LLM i
 
 ## Folder Structure
 
-```bash
-example: 
-ingestion
-old
-search
-vectore-store
-    books
-context-search
+```
+archived:       old files
+assets:         images, videos, etc.
+ingestion:      data ingestion
+search:         search functions
+vectore-store:  vector store data
 ```
 
 
