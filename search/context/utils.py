@@ -58,7 +58,7 @@ def retriver_context(embeddings_model='nomic-embed-text:v1.5',
             search_kwargs={'k': k, 'fetch_k': fetch_k}
         )
         
-    return retriever, db
+    return db
 
 
 def search_context(retriever, prompt, question, model='llama3:8b', temperature=0):

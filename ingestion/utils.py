@@ -12,7 +12,7 @@ class BookIngestor:
     def __init__(self,
                  library,
                  path_vector_store='./vector_store',
-                 chunk_size=500,
+                 chunk_size=700,
                  embeddings=OllamaEmbeddings(model='nomic-embed-text:v1.5')):
         self.library = library
         self.embeddings = embeddings

@@ -25,7 +25,7 @@ PATH_BOOKS = "./vector-store/faiss/books"
 def library_tool(text: str) -> str:
     """Retorna livros que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    _, db = utils.retriver_context(embeddings_model=embeddings_model,
+    db = utils.retriver_context(embeddings_model=embeddings_model,
                                    path_books=PATH_BOOKS,
                                    vector_store='faiss')
     documents = db.similarity_search(text)
@@ -68,6 +68,7 @@ commentary_agent = Agent(
         "compreensão e apreciação do material."
     ),
     verbose=VERBOSE,
+    allow_delegation=False,
 )
 
 
