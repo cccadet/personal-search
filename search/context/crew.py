@@ -1,27 +1,40 @@
-from crewai import Agent, Task, Crew
+import os
+from crewai import Agent, Task
 from crewai_tools import tool
 from search.context import utils
-import os
 
+# ------ Ollama - Local---------#
 embeddings_model = os.getenv("LOCAL_EMBEDDINGS_MODEL")
+
+# ------ OpenAI - API ---------#
+os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
+
+# ------ DEBUG ---------#
 debug = os.getenv("DEBUG_MODE", "False")
+if debug.lower() == "true":
+    VERBOSE = 2
+else:
+    VERBOSE = False
 
 # ------- TOOLS ------- #
 
 # Vectore Store path
-path_books = "./vector-store/faiss/books"
+PATH_BOOKS = "./vector-store/faiss/books"
 
 @tool("Pesquisar em Livros")
 def library_tool(text: str) -> str:
     """Retorna livros que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    _, db = utils.retriver_context(embeddings_model=embeddings_model, path_books=path_books, vector_store='faiss')
+    _, db = utils.retriver_context(embeddings_model=embeddings_model,
+                                   path_books=PATH_BOOKS,
+                                   vector_store='faiss')
     documents = db.similarity_search(text)
     for row in documents:
         page_content = row.page_content
         source = row.metadata['source']
         page = row.metadata['page']
-        result += f"**Trecho de {source.replace('./books/import/','').replace('.pdf','')} - página {page}:** \n"
+        source = source.replace('./books/','').replace('.pdf','')
+        result += f"**Trecho de {source} - página {page}:** \n"
         result += f"{page_content}\n\n"
     return result
 
@@ -40,12 +53,13 @@ library_agent = Agent(
     ),
     tools=[library_tool],
     allow_delegation=False,
-    verbose=debug,
+    verbose=VERBOSE,
 )
 
 commentary_agent = Agent(
     role="Especialista em Comentário Literário",
-    goal="Forneça comentários perspicazes sobre os trechos fornecidos pelo Especialista em Pesquisa da Biblioteca.",
+    goal="Forneça comentários perspicazes sobre os trechos fornecidos pelo "
+         "Especialista em Pesquisa da Biblioteca.",
     backstory=(
         "Você atualmente é encarregado de fornecer comentários perspicazes "
         "em trechos de livros encontrados pelo Especialista em Pesquisa da Biblioteca. "
@@ -53,7 +67,7 @@ commentary_agent = Agent(
         "relacionado ao texto fornecido e ajuda a melhorar "
         "compreensão e apreciação do material."
     ),
-    verbose=debug,
+    verbose=VERBOSE,
 )
 
 
@@ -73,7 +87,6 @@ library_search_task = Task(
         "autor e número da página. Os trechos devem ajudar a fornecer insights mais profundos "
         "ou contexto adicional ao texto fornecido."
     ),
-    tools=[library_tool],
     agent=library_agent,
 )
 
@@ -94,5 +107,4 @@ literary_commentary_task = Task(
         "e quais insights ou adicionais contexto que ele fornece. "
     ),
     agent=commentary_agent,
-    context=[library_search_task],
 )
