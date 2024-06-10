@@ -7,7 +7,7 @@ from operator import itemgetter
 from langchain.load import dumps, loads
 
 
-def retriver_context(embeddings_model='nomic-embed-text:v1.5',
+def retriever_context(embeddings_model='nomic-embed-text:v1.5',
                      path_books='./vector-store/faiss/books',
                      distance_metric='cos',
                      fetch_k=100,
@@ -57,7 +57,60 @@ def retriver_context(embeddings_model='nomic-embed-text:v1.5',
             search_type="mmr",
             search_kwargs={'k': k, 'fetch_k': fetch_k}
         )
-        
+
+    return db
+
+
+def retriever_bible(embeddings_model='nomic-embed-text:v1.5',
+                     path_books='./vector-store/faiss/bible',
+                     distance_metric='cos',
+                     fetch_k=100,
+                     k=3,
+                     maximal_marginal_relevance=False,
+                     vector_store='faiss'):
+    """
+    Retrieves the context using the specified parameters.
+
+    Args:
+        embeddings_model (str): The embeddings model to use. Default is 'nomic-embed-text:v1.5'.
+        path_books (str): The path to the vector store. Default is './vector-store/books'.
+        distance_metric (str): The distance metric to use for retrieval. Default is 'cos'.
+        fetch_k (int): The number of documents to fetch before filtering. Default is 100.
+        k (int): The number of documents to return. Default is 3.
+        maximal_marginal_relevance (bool): Whether to use maximal marginal relevance for example selection. Default is False.
+        vector_store (str): The vector store to use. Default is 'faiss'.
+
+    Returns:
+        tuple: A tuple containing the retriever and the vector store.
+
+    """
+    # Load the embeddings model
+    embeddings = OllamaEmbeddings(model=embeddings_model)
+    # Load the Vector Store
+    if vector_store == 'faiss':
+        db = FAISS.load_local(path_books, embeddings, allow_dangerous_deserialization=True)
+    elif vector_store == 'chroma':
+        db = Chroma(persist_directory=path_books, embedding_function=embeddings)
+
+    if vector_store == 'faiss':
+        # Load vectore store as retriever (search engine)
+        retriever = db.as_retriever()
+        # distance_metric: cosine
+        retriever.search_kwargs["distance_metric"] = distance_metric
+        # fetch_k: search method to set how many documents you want to fetch before filtering
+        retriever.search_kwargs["fetch_k"] = fetch_k
+        # maximal_marginal_relevance: The MaxMarginalRelevanceExampleSelector selects
+        # examples based on a combination of which examples are most similar to the inputs,
+        # while also optimizing for diversity.
+        retriever.search_kwargs["maximal_marginal_relevance"] = maximal_marginal_relevance
+        # k: Number of documents to return
+        retriever.search_kwargs["k"] = k
+    elif vector_store == 'chroma':
+        # Load vectore store as retriever (search engine)
+        retriever = db.as_retriever(
+            search_type="mmr",
+            search_kwargs={'k': k, 'fetch_k': fetch_k}
+        )
     return db
 
 

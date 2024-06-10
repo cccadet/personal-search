@@ -25,7 +25,7 @@ PATH_BOOKS = "./vector-store/faiss/books"
 def library_tool(text: str) -> str:
     """Retorna livros que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    db = utils.retriver_context(embeddings_model=embeddings_model,
+    db = utils.retriever_context(embeddings_model=embeddings_model,
                                    path_books=PATH_BOOKS,
                                    vector_store='faiss')
     documents = db.similarity_search(text)
@@ -34,6 +34,27 @@ def library_tool(text: str) -> str:
         source = row.metadata['source']
         page = row.metadata['page']
         source = source.replace('./books/','').replace('.pdf','')
+        result += f"**Trecho de {source} - página {page}:** \n"
+        result += f"{page_content}\n\n"
+    return result
+
+
+# Vectore Store path
+PATH_BIBLE = "./vector-store/faiss/bible"
+
+@tool("Pesquisa na Bíblia")
+def bible_tool(text: str) -> str:
+    """Retorna trechos bíblicos que possuem conteúdo relacionado com termo ou assunto buscado."""
+    result = ""
+    db = utils.retriever_context(embeddings_model=embeddings_model,
+                                   path_books=PATH_BIBLE,
+                                   vector_store='faiss')
+    documents = db.similarity_search(text)
+    for row in documents:
+        page_content = row.page_content
+        source = row.metadata['source']
+        page = row.metadata['page']
+        source = source.replace('./bible/','').replace('.pdf','')
         result += f"**Trecho de {source} - página {page}:** \n"
         result += f"{page_content}\n\n"
     return result
@@ -69,6 +90,21 @@ commentary_agent = Agent(
     ),
     verbose=VERBOSE,
     allow_delegation=False,
+)
+
+bible_agent = Agent(
+    role="Especialista em Pesquisa Bíblica",
+    goal="Encontre os trechos da Bíblia mais relevantes relacionados ao texto fornecido.",
+    backstory=(
+        "Você atualmente é encarregado de usar a bible_tool "
+        "para encontrar trechos relevantes da Bíblia relacionados "
+        "para um texto fornecido. "
+        "Seu objetivo é garantir que os trechos que você fornece "
+        "são altamente relevantes e úteis para análises posteriores. "
+    ),
+    tools=[bible_tool],
+    allow_delegation=False,
+    verbose=VERBOSE,
 )
 
 
@@ -108,4 +144,21 @@ literary_commentary_task = Task(
         "e quais insights ou adicionais contexto que ele fornece. "
     ),
     agent=commentary_agent,
+)
+
+bible_search_task = Task(
+    description=(
+        "O cliente forneceu o seguinte texto para análise:\n"
+        "{text}\n\n"
+        "Sua tarefa é usar a bible_tool para encontrar os mais relevantes " 
+        "trechos da Bíblia relacionados a este texto. Certifique-se de que os trechos "
+        "que você fornece são altamente relevantes e úteis para análises posteriores."
+    ),
+    expected_output=(
+        "Trechos da Bíblia diretamente relacionados ao texto fornecido. "
+        "Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro "
+        ", número da página e se possível capítulo e versículo. Os trechos devem ajudar "
+        "a fornecer insights mais profundos ou contexto adicional ao texto fornecido."
+    ),
+    agent=bible_agent,
 )
