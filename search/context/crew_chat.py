@@ -1,85 +1,59 @@
 import os
+from typing import Any, Dict
+
+import streamlit as st
 from crewai import Agent, Task
 from crewai_tools import tool
-from search.context import utils
 from langchain_core.callbacks import BaseCallbackHandler
-from typing import TYPE_CHECKING, Any, Dict, Optional
-import streamlit as st
+from search.context import utils
 
-avators = {"Writer":"https://cdn-icons-png.flaticon.com/512/320/320336.png",
-            "Reviewer":"https://cdn-icons-png.freepik.com/512/9408/9408201.png"}
+# Constantes Globais
+AVATARS = {"commentary": "./assets/e-book.png", "bible": "./assets/biblia.png"}
+PATH_BOOKS = "./vector-store/faiss/books"
+PATH_BIBLE = "./vector-store/faiss/bible"
+EMBEDDINGS_MODEL = os.getenv("LOCAL_EMBEDDINGS_MODEL")
+os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
+DEBUG = os.getenv("DEBUG_MODE", "False").lower() == "true"
+VERBOSE = 2 if DEBUG else False
 
-class MyCustomHandler(BaseCallbackHandler):
+class AgentOutputHandler(BaseCallbackHandler):
+    """Custom handler para processar eventos a cada término da chain."""
     def __init__(self, agent_name: str) -> None:
         self.agent_name = agent_name
 
-    def on_chain_start(
-        self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
-    ) -> None:
-        pass
-        #"""Print out that we are entering a chain."""
-        #st.session_state.messages.append({"role": "assistant", "content": inputs['input']})
-        #st.chat_message("assistant").write(inputs['input'])
-   
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
-        """Print out that we finished a chain."""
+        """Retorna a saída da chain, postando uma mensagem com um avatar."""
         st.session_state.messages.append({"role": self.agent_name, "content": outputs['output']})
-        st.chat_message(self.agent_name, avatar=avators[self.agent_name]).write(outputs['output'])
+        st.chat_message(self.agent_name, avatar=AVATARS[self.agent_name]).write(outputs['output'])
 
-# ------ Ollama - Local---------#
-embeddings_model = os.getenv("LOCAL_EMBEDDINGS_MODEL")
-
-# ------ OpenAI - API ---------#
-os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
-
-# ------ DEBUG ---------#
-debug = os.getenv("DEBUG_MODE", "False")
-if debug.lower() == "true":
-    VERBOSE = 2
-else:
-    VERBOSE = False
 
 # ------- TOOLS ------- #
-
-# Vectore Store path
-PATH_BOOKS = "./vector-store/faiss/books"
 
 @tool("Pesquisar em Livros")
 def library_tool(text: str) -> str:
     """Retorna livros que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    db = utils.retriever_context(embeddings_model=embeddings_model,
-                                   path_books=PATH_BOOKS,
-                                   vector_store='faiss')
+    db = utils.retriever_context(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BOOKS, vector_store='faiss')
     documents = db.similarity_search(text)
     for row in documents:
         page_content = row.page_content
-        source = row.metadata['source']
+        source = row.metadata['source'].replace('./books/', '').replace('.pdf', '')
         page = row.metadata['page']
-        source = source.replace('./books/','').replace('.pdf','')
-        result += f"**Trecho de {source} - página {page}:** \n"
-        result += f"{page_content}\n\n"
+        result += f"**Trecho de {source} - página {page}:** \n{page_content}\n\n"
     return result
 
-
-# Vectore Store path
-PATH_BIBLE = "./vector-store/faiss/bible"
 
 @tool("Pesquisa na Bíblia")
 def bible_tool(text: str) -> str:
     """Retorna trechos bíblicos que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    db = utils.retriever_context(embeddings_model=embeddings_model,
-                                   path_books=PATH_BIBLE,
-                                   vector_store='faiss')
+    db = utils.retriever_context(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BIBLE, vector_store='faiss')
     documents = db.similarity_search(text)
     for row in documents:
         page_content = row.page_content
-        source = row.metadata['source']
+        source = row.metadata['source'].replace('./bible/', '').replace('.pdf', '')
         page = row.metadata['page']
-        source = source.replace('./bible/','').replace('.pdf','')
-        result += f"**Trecho de {source} - página {page}:** \n"
-        result += f"{page_content}\n\n"
+        result += f"**Trecho de {source} - página {page}:** \n{page_content}\n\n"
     return result
 
 
@@ -113,7 +87,7 @@ commentary_agent = Agent(
     ),
     verbose=VERBOSE,
     allow_delegation=False,
-    callbacks=[MyCustomHandler("Writer")],
+    callbacks=[AgentOutputHandler("commentary")],
 )
 
 bible_agent = Agent(
@@ -129,8 +103,10 @@ bible_agent = Agent(
     tools=[bible_tool],
     allow_delegation=False,
     verbose=VERBOSE,
-    callbacks=[MyCustomHandler("Reviewer")],
+    callbacks=[AgentOutputHandler("bible")],
 )
+
+
 
 
 # ------- TASKS ------- #

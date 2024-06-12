@@ -1,67 +1,53 @@
-# To install required packages:
-# pip install crewai==0.22.5 streamlit==1.32.2
-
 import os
 import streamlit as st
-
-from crewai import Crew, Process
-from langchain_core.callbacks import BaseCallbackHandler
-from typing import TYPE_CHECKING, Any, Dict, Optional
-
 from crewai import Crew
-from search.context.crew_chat import library_agent, commentary_agent, \
-                                library_search_task, literary_commentary_task, \
-                                bible_agent, bible_search_task
+from search.context.crew_chat import (
+    library_agent, commentary_agent, library_search_task, 
+    literary_commentary_task, bible_agent, bible_search_task
+)
 
-avators = {"Writer":"https://cdn-icons-png.flaticon.com/512/320/320336.png",
-            "Reviewer":"https://cdn-icons-png.freepik.com/512/9408/9408201.png"}
+# Configurações locais
+LOCAL_EMBEDDINGS_URL = "http://localhost:11434/api/embeddings"
+EMBEDDINGS_MODEL = "nomic-embed-text:v1.5"
+os.environ["LOCAL_EMBEDDINGS"] = LOCAL_EMBEDDINGS_URL
+os.environ["LOCAL_EMBEDDINGS_MODEL"] = EMBEDDINGS_MODEL
 
-# ------ Ollama - Local---------#
-os.environ["LOCAL_EMBEDDINGS"]="http://localhost:11434/api/embeddings"
-embeddings_model = "nomic-embed-text:v1.5"
-os.environ["LOCAL_EMBEDDINGS_MODEL"]=embeddings_model # documentar como definir variáveis de ambiente
-
-# ------ OpenAI - API ---------#
+# Configurações da API OpenAI
 os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
 
-# ------ DEBUG ---------#
-os.environ["DEBUG"]="False"
-debug = os.getenv("DEBUG_MODE", "False")
-if debug.lower() == "true":
-    VERBOSE = 2
-else:
-    VERBOSE = False
+# Configurações de DEBUG
+os.environ["DEBUG"] = "False"
+DEBUG_MODE = os.getenv("DEBUG_MODE", "False").lower() == "true"
+VERBOSE = 2 if DEBUG_MODE else False
 
+# Título da aplicação Streamlit
+st.title("💬 Pesquisa Pessoal")
 
-# ------- AGENTS ------- #
-
-
-st.title("💬 CrewAI Writing Studio")
-
+# Inicialização do estado da sessão para mensagens
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "Qual assunto deseja pesquisar?"}]
+    st.session_state["messages"] = [{"role": "assistant",
+                                     "content": "Qual assunto deseja pesquisar? Você tem acesso a sua biblioteca pessoal e a Bíblia."}]
 
+# Exibição das mensagens
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
+# Entrada do usuário
 if prompt := st.chat_input():
-
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    # Establishing the crew with a hierarchical process
-    # process=Process.hierarchical  # Specifies the hierarchical management approach
+    # Configuração e execução do Crew
     crew = Crew(
         agents=[library_agent, commentary_agent, bible_agent],
         tasks=[library_search_task, literary_commentary_task, bible_search_task],
         verbose=VERBOSE,
         memory=False,
     )
-    inputs = {
-        "text": prompt
-    }
+    inputs = {"text": prompt}
     final = crew.kickoff(inputs=inputs)
 
-    result = f"## Here is the Final Result \n\n {final}"
+    # Exibição do resultado
+    result = f"## Aqui está o resultado final \n\n {final}"
     st.session_state.messages.append({"role": "assistant", "content": result})
     st.chat_message("assistant").write(result)
