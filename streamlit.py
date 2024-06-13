@@ -2,8 +2,10 @@ import os
 import streamlit as st
 from crewai import Crew
 from search.context.crew_chat import (
-    library_agent, commentary_agent, library_search_task, 
-    literary_commentary_task, bible_agent, bible_search_task
+    library_agent, commentary_agent, library_search_task,
+    literary_commentary_task, bible_agent, bible_search_task,
+    revisor_agent, revisor_task,
+    library_select_task, final_revisor_agent
 )
 
 # Configurações locais
@@ -39,8 +41,8 @@ if prompt := st.chat_input():
 
     # Configuração e execução do Crew
     crew = Crew(
-        agents=[library_agent, commentary_agent, bible_agent],
-        tasks=[library_search_task, literary_commentary_task, bible_search_task],
+        agents=[library_agent, revisor_agent, commentary_agent, bible_agent, final_revisor_agent],
+        tasks=[library_search_task, library_select_task, literary_commentary_task, bible_search_task, revisor_task],
         verbose=VERBOSE,
         memory=False,
     )

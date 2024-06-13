@@ -6,9 +6,13 @@ from crewai import Agent, Task
 from crewai_tools import tool
 from langchain_core.callbacks import BaseCallbackHandler
 from search.context import utils
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 
 # Constantes Globais
-AVATARS = {"commentary": "./assets/e-book.png", "bible": "./assets/biblia.png"}
+AVATARS = {"commentary": "./assets/e-book.png", "bible": "./assets/biblia.png",
+           "revisor": "./assets/revisor.png"}
 PATH_BOOKS = "./vector-store/faiss/books"
 PATH_BIBLE = "./vector-store/faiss/bible"
 EMBEDDINGS_MODEL = os.getenv("LOCAL_EMBEDDINGS_MODEL")
@@ -47,7 +51,7 @@ def library_tool(text: str) -> str:
 def bible_tool(text: str) -> str:
     """Retorna trechos bíblicos que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    db = utils.retriever_context(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BIBLE, vector_store='faiss')
+    db = utils.retriever_bible(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BIBLE, vector_store='faiss')
     documents = db.similarity_search(text)
     for row in documents:
         page_content = row.page_content
@@ -72,21 +76,37 @@ library_agent = Agent(
     tools=[library_tool],
     allow_delegation=False,
     verbose=VERBOSE,
+    llm=llm
+)
+
+revisor_agent = Agent(
+    role="Revisor de Texto",
+    goal="Revisar e melhorar a qualidade dos trechos fornecidos pelos Especialistas.",
+    backstory=(
+        "Você atualmente é encarregado de revisar e melhorar a qualidade "
+        "dos trechos fornecidos pelos Especialistas em Pesquisa da Biblioteca. "
+        "Seu objetivo é garantir que os trechos fornecidos são relevantes, "
+        "precisos e úteis para análises posteriores."
+    ),
+    allow_delegation=False,
+    verbose=VERBOSE,
+    llm=llm,
+    callbacks=[AgentOutputHandler("revisor")],
 )
 
 commentary_agent = Agent(
     role="Especialista em Comentário Literário",
-    goal="Forneça comentários perspicazes sobre os trechos fornecidos pelo "
-         "Especialista em Pesquisa da Biblioteca.",
+    goal="Forneça comentários perspicazes sobre os trechos fornecidos.",
     backstory=(
         "Você atualmente é encarregado de fornecer comentários perspicazes "
-        "em trechos de livros encontrados pelo Especialista em Pesquisa da Biblioteca. "
-        "Seu objetivo é garantir que seu comentário seja direto "
-        "relacionado ao texto fornecido e ajuda a melhorar "
+        "em trechos de livros selecionados pelo Revisor de texto. "
+        "Seu objetivo é garantir que seu comentário explique a "
+        "relação do trecho do livro com o texto fornecido e ajuda a melhorar "
         "compreensão e apreciação do material."
     ),
     verbose=VERBOSE,
     allow_delegation=False,
+    llm=llm,
     callbacks=[AgentOutputHandler("commentary")],
 )
 
@@ -103,9 +123,22 @@ bible_agent = Agent(
     tools=[bible_tool],
     allow_delegation=False,
     verbose=VERBOSE,
+    llm=llm,
     callbacks=[AgentOutputHandler("bible")],
 )
 
+final_revisor_agent = Agent(
+    role="Revisor de Texto",
+    goal="Revisar e melhorar a qualidade dos trechos fornecidos pelos Especialistas.",
+    backstory=(
+        "Você atualmente é encarregado de sumarizar os trechos fornecidos pelos especialistas, "
+        "deixando claro qual trecho esta sendo avaliado e explicar como o trecho se relaciona com o texto original. "
+        "Faça isso em forma de tópicos, para facilitar a compreensão do texto."
+    ),
+    allow_delegation=False,
+    verbose=VERBOSE,
+    llm=llm
+)
 
 
 
@@ -128,20 +161,35 @@ library_search_task = Task(
     agent=library_agent,
 )
 
+library_select_task = Task(
+    description=(
+        "O cliente forneceu os seguintes trechos de livros para análise:\n"
+        "{text}\n\n"
+        "Sua tarefa é selecionar os trechos mais relevantes e úteis para análises posteriores. "
+        "Certifique-se de que os trechos selecionados são altamente relevantes e fornecem insights "
+        "mais profundos ou contexto adicional ao texto fornecido."
+        "Indique caso não haja relação."
+    ),
+    expected_output=(
+        "Trechos de livros selecionados diretamente relacionados ao texto fornecido. "
+        "Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro "
+        "autor e número da página. Os trechos devem ser relevantes, precisos e úteis para análises "
+        "posteriores. Ou uma explicação caso não haja relação nenhuma."
+    ),
+    agent=revisor_agent,
+)
+
 literary_commentary_task = Task(
     description=(
-        "Sua tarefa é citar os trechos retornados pelo"
-        "Especialista em Pesquisa da Biblioteca para a pesquisa {text}"
-        "e fornecer comentários perspicazes sobre eles. "
-        "Certifique-se de que seu comentário esteja diretamente relacionado ao texto buscado "
-        "e ajude a melhorar a compreensão e apreciação do material. "
+        "Caso haja trechos de livros relacionado, faça um comentário que ajude a melhorar a "
+        "compreensão e apreciação do material. Certifique-se de que seu comentário esteja "
+        "diretamente relacionado ao texto buscado: {text}"
         "Responda em português."
     ),
     expected_output=(
-        "Texto original fornecido pelo cliente, "
-        "seguido pelos trechos de livros fornecidos pelo Especialista em "
-        "Pesquisa da Biblioteca. Por fim, um comentário detalhado sobre os trechos fornecidos. "
-        "Cada comentário deve explicar como o trecho se relaciona com o texto original "
+        "Um comentário detalhado para cada trecho fornecido. "
+        "Cada comentário deve deixar claro qual trecho esta sendo avaliado e explicar "
+        "como o trecho se relaciona com o texto original "
         "e quais insights ou adicionais contexto que ele fornece. "
     ),
     agent=commentary_agent,
@@ -152,8 +200,7 @@ bible_search_task = Task(
         "O cliente forneceu o seguinte texto para análise:\n"
         "{text}\n\n"
         "Sua tarefa é usar a bible_tool para encontrar os mais relevantes " 
-        "trechos da Bíblia relacionados a este texto. Certifique-se de que os trechos "
-        "que você fornece são altamente relevantes e úteis para análises posteriores."
+        "trechos da Bíblia relacionados a este texto. "
     ),
     expected_output=(
         "Trechos da Bíblia diretamente relacionados ao texto fornecido. "
@@ -162,4 +209,22 @@ bible_search_task = Task(
         "a fornecer insights mais profundos ou contexto adicional ao texto fornecido."
     ),
     agent=bible_agent,
+)
+
+revisor_task = Task(
+    description=(
+        "Sua tarefa é revisar e melhorar a qualidade dos trechos fornecidos pelos "
+        "Especialista em Comentário Literário e Especialista em Pesquisa Bíblica. "
+        "Certifique-se de que os trechos fornecidos são relevantes, precisos e úteis "
+        "para análises posteriores. "
+        "Responda em português."
+    ),
+    expected_output=(
+        "Trechos revisados e melhorados fornecidos pelos Especialista em Comentário Literário "
+        "e Especialista em Pesquisa Bíblica. Cada trecho deve ser claramente citado com sua fonte, "
+        "incluindo o título do livro, autor e número da página. Os trechos devem ser relevantes, "
+        "precisos e úteis para análises posteriores."
+    ),
+    agent=final_revisor_agent,
+    context=[library_select_task, literary_commentary_task, bible_search_task]
 )
