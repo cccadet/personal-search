@@ -220,10 +220,9 @@ revisor_task = Task(
         "Responda em português."
     ),
     expected_output=(
-        "Trechos revisados e melhorados fornecidos pelos Especialista em Comentário Literário "
-        "e Especialista em Pesquisa Bíblica. Cada trecho deve ser claramente citado com sua fonte, "
-        "incluindo o título do livro, autor e número da página. Os trechos devem ser relevantes, "
-        "precisos e úteis para análises posteriores."
+        "Faça um resumo dos trechos fornecidos pelos especialistas, deixando claro qual trecho "
+        "esta sendo avaliado e explicar como o trecho se relaciona com o texto original. "
+        "Faça isso em forma de tópicos, para facilitar a compreensão do texto."
     ),
     agent=final_revisor_agent,
     context=[library_select_task, literary_commentary_task, bible_search_task]
