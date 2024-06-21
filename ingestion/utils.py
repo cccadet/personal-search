@@ -2,6 +2,7 @@ import os
 import logging
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -27,8 +28,6 @@ class BookIngestor:
         else:
             raise ValueError(f'Library {self.library} not supported')
 
-    def ingest_with_chroma(self, books):
-        raise NotImplementedError('Chroma library not implemented yet')
 
     def load_books(self, path_books):
         """
@@ -83,7 +82,7 @@ class BookIngestor:
         chunked_docs = text_spliter.split_documents(documents)
         return chunked_docs
 
-    def load_vector_store(self, chunked_docs, path_vector_store):
+    def load_faiss_vector_store(self, chunked_docs, path_vector_store):
         """
         Loads or creates a vector store using FAISS.
 
@@ -116,6 +115,59 @@ class BookIngestor:
             logging.info('Vector store loaded %s', db.index.ntotal)
             return db
 
+    def load_chroma_vector_store(self, chunked_docs, path_vector_store):
+        """
+        Loads or creates a vector store using Chroma.
+
+        Args:
+            chunked_docs (list): A list of chunked documents.
+            path_vector_store (str): The path to the vector store.
+
+        Returns:
+            Chroma object: The loaded or created vector store.
+
+        Raises:
+            None
+
+        """
+        if not os.path.isdir(path_vector_store):
+            logging.info('Creating vector store')
+            os.makedirs(path_vector_store)
+            db = Chroma.from_documents(chunked_docs, self.embeddings)
+            return db
+        else:
+            logging.info('Loading vector store')
+            db = Chroma(persist_directory=path_vector_store, embedding_function=self.embeddings)
+            logging.info('Adding documents to vector store')
+            db.add_documents(chunked_docs)
+            return db
+
+    def ingest_with_chroma(self, books):
+        '''
+        Ingest books using Chroma vector store
+
+        Args:
+            books (str): Path to the books
+
+        Returns:
+            None
+        '''
+        # Done path
+        path_done = f'{books}/done'
+        # Get the last directory of the books
+        books_path = books.split('/')[-1]
+        # Load books from path
+        books = self.load_books(books)
+        # Process each book
+        for book in books:
+            logging.info('Processing book %s', book)
+            documents_books = self.load_pdf(book)
+            chunked_docs = self.load_chunked_docs(documents_books)
+            self.load_chroma_vector_store(chunked_docs=chunked_docs,
+                path_vector_store=f'{self.path_vector_store}/chroma/{books_path}')
+            logging.info('Moving book %s to %s', book, path_done)
+            os.rename(book, os.path.join(path_done, os.path.basename(book)))
+
     def ingest_with_faiss(self, books):
         # Done path
         path_done = f'{books}/done'
@@ -128,7 +180,7 @@ class BookIngestor:
             logging.info('Processing book %s', book)
             documents_books = self.load_pdf(book)
             chunked_docs = self.load_chunked_docs(documents_books)
-            self.load_vector_store(chunked_docs=chunked_docs,
+            self.load_faiss_vector_store(chunked_docs=chunked_docs,
                 path_vector_store=f'{self.path_vector_store}/faiss/{books_path}')
             logging.info('Moving book %s to %s', book, path_done)
             os.rename(book, os.path.join(path_done, os.path.basename(book)))
