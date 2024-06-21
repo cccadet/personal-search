@@ -1,9 +1,13 @@
+'''
+This module contains utility functions for retrieving books excerpts, bible excerpts,
+and generating queries.
+'''
+from operator import itemgetter
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores import Chroma
 from langchain_community.llms import Ollama
 from langchain_core.output_parsers import StrOutputParser
-from operator import itemgetter
 from langchain.load import dumps, loads
 
 
@@ -15,7 +19,7 @@ def retriever_context(embeddings_model='nomic-embed-text:v1.5',
                      maximal_marginal_relevance=False,
                      vector_store='faiss'):
     """
-    Retrieves the context using the specified parameters.
+    Retrieves books excerpts using the specified parameters.
 
     Args:
         embeddings_model (str): The embeddings model to use. Default is 'nomic-embed-text:v1.5'.
@@ -69,7 +73,7 @@ def retriever_bible(embeddings_model='nomic-embed-text:v1.5',
                      maximal_marginal_relevance=False,
                      vector_store='faiss'):
     """
-    Retrieves the context using the specified parameters.
+    Retrieves bible excerpts using the specified parameters.
 
     Args:
         embeddings_model (str): The embeddings model to use. Default is 'nomic-embed-text:v1.5'.

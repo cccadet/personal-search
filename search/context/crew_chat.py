@@ -5,16 +5,17 @@ import streamlit as st
 from crewai import Agent, Task
 from crewai_tools import tool
 from langchain_core.callbacks import BaseCallbackHandler
-from search.context import utils
 from langchain_openai import ChatOpenAI
+from search.context import utils
 
 llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 
 # Constantes Globais
 AVATARS = {"commentary": "./assets/e-book.png", "bible": "./assets/biblia.png",
            "revisor": "./assets/revisor.png"}
-PATH_BOOKS = "./vector-store/faiss/books"
-PATH_BIBLE = "./vector-store/faiss/bible"
+VECTOR_STORE = 'chroma'
+PATH_BOOKS = f"./vector-store/{VECTOR_STORE}/books"
+PATH_BIBLE = f"./vector-store/{VECTOR_STORE}/bible"
 EMBEDDINGS_MODEL = os.getenv("LOCAL_EMBEDDINGS_MODEL")
 os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
 DEBUG = os.getenv("DEBUG_MODE", "False").lower() == "true"
@@ -37,7 +38,7 @@ class AgentOutputHandler(BaseCallbackHandler):
 def library_tool(text: str) -> str:
     """Retorna livros que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    db = utils.retriever_context(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BOOKS, vector_store='faiss')
+    db = utils.retriever_context(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BOOKS, vector_store=VECTOR_STORE)
     documents = db.similarity_search(text)
     for row in documents:
         page_content = row.page_content
@@ -51,7 +52,7 @@ def library_tool(text: str) -> str:
 def bible_tool(text: str) -> str:
     """Retorna trechos bíblicos que possuem conteúdo relacionado com termo ou assunto buscado."""
     result = ""
-    db = utils.retriever_bible(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BIBLE, vector_store='faiss')
+    db = utils.retriever_bible(embeddings_model=EMBEDDINGS_MODEL, path_books=PATH_BIBLE, vector_store=VECTOR_STORE)
     documents = db.similarity_search(text)
     for row in documents:
         page_content = row.page_content
@@ -65,13 +66,12 @@ def bible_tool(text: str) -> str:
 
 library_agent = Agent(
     role="Especialista em Pesquisa em Biblioteca",
-    goal="Encontre os trechos de livros mais relevantes relacionados ao texto fornecido.",
+    goal="Encontre os trechos de livros que falem explicitamente do tópico fornecido.",
     backstory=(
         "Você atualmente é encarregado de usar a library_tool "
-        "para encontrar trechos relevantes de livros relacionados "
-        "para um texto fornecido. "
+        "para encontrar trechos que falem do tópico fornecido. "
         "Seu objetivo é garantir que os trechos que você fornece "
-        "são altamente relevantes e úteis para análises posteriores. "
+        "tratem diretamente do tópico e não uma relação distante. "
     ),
     tools=[library_tool],
     allow_delegation=False,
@@ -86,12 +86,12 @@ revisor_agent = Agent(
         "Você atualmente é encarregado de revisar e melhorar a qualidade "
         "dos trechos fornecidos pelos Especialistas em Pesquisa da Biblioteca. "
         "Seu objetivo é garantir que os trechos fornecidos são relevantes, "
-        "precisos e úteis para análises posteriores."
+        "precisos e falem do tópico fornecido pelo cliente."
     ),
     allow_delegation=False,
     verbose=VERBOSE,
     llm=llm,
-    callbacks=[AgentOutputHandler("revisor")],
+    callbacks=[AgentOutputHandler("revisor")]
 )
 
 commentary_agent = Agent(
@@ -146,35 +146,27 @@ final_revisor_agent = Agent(
 
 library_search_task = Task(
     description=(
-        "O cliente forneceu o seguinte texto para análise:\n"
-        "{text}\n\n"
-        "Sua tarefa é usar a library_tool para encontrar os mais relevantes " 
-        "trechos de livros relacionados a este texto. Certifique-se de que os trechos "
-        "que você fornece são altamente relevantes e úteis para análises posteriores."
+        "Sua tarefa é usar a library_tool para encontrar trechos de livros que falem explicitamente "
+        " do tópico: {text} "
     ),
     expected_output=(
-        "Trechos de livros diretamente relacionados ao texto fornecido. "
-        "Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro "
-        "autor e número da página. Os trechos devem ajudar a fornecer insights mais profundos "
-        "ou contexto adicional ao texto fornecido."
+        "Trechos de livros que falem explicitamente do tópico fornecido. "
+        "Cada trecho deve ser claramente citado e incluída sua fonte, com o título do livro "
+        "autor e número da página."
     ),
     agent=library_agent,
 )
 
 library_select_task = Task(
     description=(
-        "O cliente forneceu os seguintes trechos de livros para análise:\n"
-        "{text}\n\n"
-        "Sua tarefa é selecionar os trechos mais relevantes e úteis para análises posteriores. "
-        "Certifique-se de que os trechos selecionados são altamente relevantes e fornecem insights "
-        "mais profundos ou contexto adicional ao texto fornecido."
-        "Indique caso não haja relação."
+        "Selecione os trechos que falam sobre o tópico: {text} "
+        "Explique a relação ou indique caso não haja relação. Responda em português."
     ),
     expected_output=(
-        "Trechos de livros selecionados diretamente relacionados ao texto fornecido. "
-        "Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro "
-        "autor e número da página. Os trechos devem ser relevantes, precisos e úteis para análises "
-        "posteriores. Ou uma explicação caso não haja relação nenhuma."
+        "Tópico fornecido pelo cliente."
+        "Trechos que falam do tópico fornecido pelo cliente, citando com sua fonte, incluindo o título do livro "
+        "autor e número da página ou indicação caso não haja relação. "
+        "Explicação onde o trecho fala diretamente sobre o tópico fornecido pelo cliente."
     ),
     agent=revisor_agent,
 )
