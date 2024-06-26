@@ -7,6 +7,7 @@ authors = ["Cristian C Dos Santos <perestra.ccds@gmail.com>"]
 [tool.poetry.dependencies]
 python = ">=3.10,<=3.13"
 crewai = { extras = ["tools"], version = "^0.32.2" }
+langchain_openai = "*"
 
 [tool.poetry.scripts]
 personal_search = "personal_search.main:run"

@@ -1,14 +1,11 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-
-# Uncomment the following line to use an example of a custom tool
-from personal_search.tools.custom_tool import LibraryTool
+from langchain_openai import ChatOpenAI
+llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
+from personal_search.tools.custom_tool import LibraryTool, BibleTool
 
 # Check our tools documentations for more information on how to use them
 # from crewai_tools import SerperDevTool
-
-from langchain_openai import ChatOpenAI
-llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 
 @CrewBase
 class PersonalSearchCrew():
@@ -17,12 +14,13 @@ class PersonalSearchCrew():
 	tasks_config = 'config/tasks.yaml'
 
 	@agent
-	def librarian(self) -> Agent:
+	def researcher(self) -> Agent:
 		return Agent(
-			config=self.agents_config['librarian'],
-			tools=[LibraryTool()], # Example of custom tool, loaded on the beginning of file
+			config=self.agents_config['researcher'],
+			tools=[LibraryTool(),BibleTool()],
 			verbose=True,
-			llm=llm
+			llm=llm,
+    		allow_delegation=False,
 		)
 
 	@agent
@@ -30,7 +28,8 @@ class PersonalSearchCrew():
 		return Agent(
 			config=self.agents_config['revisor'],
 			verbose=True,
-			llm=llm
+			llm=llm,
+    		allow_delegation=False,
 		)
 	
 	@agent
@@ -38,7 +37,8 @@ class PersonalSearchCrew():
 		return Agent(
 			config=self.agents_config['commentary_expert'],
 			verbose=True,
-			llm=llm
+			llm=llm,
+    		allow_delegation=False,
 		)
 	
 	@agent
@@ -46,7 +46,9 @@ class PersonalSearchCrew():
 		return Agent(
 			config=self.agents_config['bible_expert'],
 			verbose=True,
-			llm=llm
+			tools=[BibleTool()],
+			llm=llm,
+    		allow_delegation=False,
 		)
 	
 	@agent
@@ -54,7 +56,9 @@ class PersonalSearchCrew():
 		return Agent(
 			config=self.agents_config['final_revisor'],
 			verbose=True,
-			llm=llm
+			llm=llm,
+    		allow_delegation=False,
+			output_file='Final.md'
 		)
 
 	@task
