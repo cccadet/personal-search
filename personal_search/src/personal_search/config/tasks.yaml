@@ -1,0 +1,55 @@
+library_search:
+  description: >
+    Sua tarefa é usar a LibraryTool para encontrar trechos de livros que falem explicitamente
+    do tópico: {topic}
+  expected_output: >
+    Trechos de livros que falem explicitamente do tópico fornecido.
+    Cada trecho deve ser claramente citado e incluída sua fonte, com o título do livro,
+    autor e número da página.
+
+library_select:
+  description: >
+    Selecione os trechos que falam sobre o tópico: {topic}
+    Explique a relação ou indique caso não haja relação. Responda em português.
+  expected_output: >
+    Tópico fornecido pelo cliente.
+    Trechos dos livros que falam do tópico fornecido pelo cliente, citando com sua fonte, 
+    incluindo o título do livro, autor e número da página ou indicação caso não haja relação.
+
+literary_commentary:
+  description: >
+    Caso haja trechos de livros relacionados, faça um comentário que ajude a melhorar a
+    compreensão e apreciação do material. Certifique-se de que seu comentário esteja
+    diretamente relacionado ao texto buscado: {topic}
+    Responda em português.
+  expected_output: >
+    Tópico fornecido pelo cliente.
+    Trecho do livro relacionado ao tópico fornecido.
+    Um comentário detalhado para cada trecho fornecido, deixando claro qual trecho está sendo 
+    avaliado e explicar como o trecho se relaciona com o tópico original.
+
+bible_search:
+  description: >
+    O cliente forneceu o seguinte texto para análise:
+    {topic}
+
+    Sua tarefa é usar a BibleTool para encontrar os mais relevantes
+    trechos da Bíblia relacionados a este texto.
+  expected_output: >
+    Trechos da Bíblia diretamente relacionados ao texto fornecido.
+    Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro,
+    número da página e se possível capítulo e versículo. Os trechos devem ajudar
+    a fornecer insights mais profundos ou contexto adicional ao texto fornecido.
+
+final_revision:
+  description: >
+    Sua tarefa é analisar sistematicamente o tópico inicial, os trechos fornecidos pelos
+    Especialista e certificar-se de que os trechos fornecidos são relevantes, precisos e úteis. 
+    Responda em português.
+  expected_output: >
+    Tópico fornecido pelo cliente.
+    Trecho do livro relacionado ao tópico fornecido.
+    Comentários do Especialista em Comentário Literário
+    Trechos da Bíblia diretamente relacionados ao texto fornecido.
+    Análise detalhada relacionando o tópico original com todo o contexto fornecido.
+  
