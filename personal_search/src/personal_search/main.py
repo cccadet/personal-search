@@ -6,7 +6,7 @@ from personal_search.crew import PersonalSearchCrew
 def run():
     # Replace with your inputs, it will automatically interpolate any tasks and agents information
     inputs = {
-        'topic': 'O que a falta aos pregadores de hoje?'
+        'topic': 'O mais importante é que vocês vivam em sua comunidade de maneira digna das boas-novas de Cristo. Então, quando eu for vê-los novamente, ou mesmo quando ouvir a seu respeito, saberei que estão firmes e unidos em um só espírito e em um só propósito, lutando juntos pela fé que é proclamada nas boas-novas.'
     }
     PersonalSearchCrew().crew().kickoff(inputs=inputs)
 

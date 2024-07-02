@@ -1,3 +1,21 @@
+research:
+  description: >
+    Você é um pesquisador que precisa de trechos de livros 
+    que falem sobre o tópico: {topic}.
+  expected_output: >
+    Trechos de livros que falem sobre o tópico fornecido.
+    Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro,
+    autor, número da página e se possível capítulo e versículo.
+
+bible_research:
+  description: >
+    Sua tarefa é encontrar trechos da Bíblia que falem sobre o tópico: {topic}
+  expected_output: >
+    Saída do agente de pesquisa bíblica.
+    Trechos da Bíblia diretamente relacionados ao texto fornecido.
+    Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro,
+    número da página e se possível capítulo e versículo.
+
 library_search:
   description: >
     Sua tarefa é usar a LibraryTool para encontrar trechos de livros que falem explicitamente
@@ -43,13 +61,14 @@ bible_search:
 
 final_revision:
   description: >
-    Sua tarefa é analisar sistematicamente o tópico inicial, os trechos fornecidos pelos
+    Tópico: {topic}
+    Sua tarefa é analisar o tópico inicial, os trechos fornecidos pelos
     Especialista e certificar-se de que os trechos fornecidos são relevantes, precisos e úteis. 
     Responda em português.
   expected_output: >
     Tópico fornecido pelo cliente.
-    Trecho do livro relacionado ao tópico fornecido.
-    Comentários do Especialista em Comentário Literário
-    Trechos da Bíblia diretamente relacionados ao texto fornecido.
+    Citação do trecho do livro avaliado e sua referência.
+    Comentários relacionando o trecho com o tópico fornecido.
+    Citação do trechos da Bíblia diretamente relacionados ao texto fornecido.
     Análise detalhada relacionando o tópico original com todo o contexto fornecido.
   

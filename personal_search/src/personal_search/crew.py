@@ -7,6 +7,17 @@ from personal_search.tools.custom_tool import LibraryTool, BibleTool
 # Check our tools documentations for more information on how to use them
 # from crewai_tools import SerperDevTool
 
+manager = Agent(
+    role="Project Manager",
+    goal="Efficiently manage the crew and ensure high-quality task completion",
+    backstory="""You're an experienced project manager, skilled in overseeing complex projects and 
+      guiding teams to success. Your role is to coordinate the efforts of the crew members, 
+      ensuring that each task is completed on time and to the highest standard.""",
+	verbose=True,
+	llm=llm,
+	allow_delegation=True,
+)
+
 @CrewBase
 class PersonalSearchCrew():
 	"""PersonalSearch crew"""
@@ -17,40 +28,24 @@ class PersonalSearchCrew():
 	def researcher(self) -> Agent:
 		return Agent(
 			config=self.agents_config['researcher'],
-			tools=[LibraryTool(),BibleTool()],
+			tools=[LibraryTool()],
 			verbose=True,
 			llm=llm,
     		allow_delegation=False,
+			async_mode=True
+		)
+	
+	@agent
+	def bible_researcher(self) -> Agent:
+		return Agent(
+			config=self.agents_config['bible_researcher'],
+			tools=[BibleTool()],
+			verbose=True,
+			llm=llm,
+			allow_delegation=False,
+			async_mode=True
 		)
 
-	@agent
-	def revisor(self) -> Agent:
-		return Agent(
-			config=self.agents_config['revisor'],
-			verbose=True,
-			llm=llm,
-    		allow_delegation=False,
-		)
-	
-	@agent
-	def commentary_expert(self) -> Agent:
-		return Agent(
-			config=self.agents_config['commentary_expert'],
-			verbose=True,
-			llm=llm,
-    		allow_delegation=False,
-		)
-	
-	@agent
-	def bible_expert(self) -> Agent:
-		return Agent(
-			config=self.agents_config['bible_expert'],
-			verbose=True,
-			tools=[BibleTool()],
-			llm=llm,
-    		allow_delegation=False,
-		)
-	
 	@agent
 	def final_revisor(self) -> Agent:
 		return Agent(
@@ -58,43 +53,27 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
     		allow_delegation=False,
-			output_file='Final.md'
 		)
 
 	@task
-	def library_search(self) -> Task:
+	def research(self) -> Task:
 		return Task(
-			config=self.tasks_config['library_search'],
-			agent=self.librarian(),
+			config=self.tasks_config['research'],
+			agent=self.researcher(),
+		)
+	
+	@task
+	def bible_research(self) -> Task:
+		return Task(
+			config=self.tasks_config['bible_research'],
+			agent=self.bible_researcher(),
 		)
 
-	@task
-	def library_select(self) -> Task:
-		return Task(
-			config=self.tasks_config['library_select'],
-			agent=self.revisor(),
-		)
-	
-	@task
-	def literary_commentary(self) -> Task:
-		return Task(
-			config=self.tasks_config['literary_commentary'],
-			agent=self.commentary_expert(),
-		)
-	
-	@task
-	def bible_search(self) -> Task:
-		return Task(
-			config=self.tasks_config['bible_search'],
-			agent=self.bible_expert(),
-		)
-	
 	@task
 	def final_revision(self) -> Task:
 		return Task(
 			config=self.tasks_config['final_revision'],
 			agent=self.final_revisor(),
-			contexts=[self.library_select(), self.literary_commentary(), self.bible_search()]
 		)
 
 	@crew
@@ -103,8 +82,9 @@ class PersonalSearchCrew():
 		return Crew(
 			agents=self.agents, # Automatically created by the @agent decorator
 			tasks=self.tasks, # Automatically created by the @task decorator
-			process=Process.sequential,
+			#process=Process.sequential,
 			verbose=2,
-			llm=llm
-			# process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+			llm=llm,
+			manager_agent=manager,
+			process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)

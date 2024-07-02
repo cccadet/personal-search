@@ -1620,7 +1620,7 @@ sympy = "*"
 
 [[package]]
 name = "openai"
-version = "1.35.3"
+version = "1.35.4"
 description = "The official Python library for the openai API"
 category = "main"
 optional = false
@@ -2770,7 +2770,7 @@ test = ["pytest (>=6,<8.1.0 || >=8.2.0)", "pytest-checkdocs (>=2.4)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<=3.13"
-content-hash = "d5c7faa08d77b4a278414145875db6e2519d1183ad048026e8b6885fd945bd7b"
+content-hash = "fc675a68e4ce012ab962244388077b50b0b622c7ac7dbed613ec0347627bd209"
 
 [metadata.files]
 aiohttp = []

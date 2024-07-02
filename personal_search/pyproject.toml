@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "personal_search"
-version = "0.1.0"
+version = "0.1.1"
 description = "personal-search using crewAI"
 authors = ["Cristian C Dos Santos <perestra.ccds@gmail.com>"]
 
