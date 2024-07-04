@@ -9,10 +9,9 @@ research:
 
 bible_research:
   description: >
-    Sua tarefa é encontrar trechos da Bíblia que falem sobre o tópico: {topic}
+    Identificar se o trecho é da Bíblia e encontrar trechos da Bíblia relacionados ao tópico: {topic}
   expected_output: >
-    Saída do agente de pesquisa bíblica.
-    Trechos da Bíblia diretamente relacionados ao texto fornecido.
+    Trechos da Bíblia encontrados, relacionados ao texto fornecido.
     Cada trecho deve ser claramente citado com sua fonte, incluindo o título do livro,
     número da página e se possível capítulo e versículo.
 

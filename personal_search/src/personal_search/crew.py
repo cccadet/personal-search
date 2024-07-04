@@ -1,8 +1,8 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
+from personal_search.tools.books import LibraryTool, BibleTool
 from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
-from personal_search.tools.custom_tool import LibraryTool, BibleTool
 
 # Check our tools documentations for more information on how to use them
 # from crewai_tools import SerperDevTool

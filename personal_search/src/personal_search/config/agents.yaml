@@ -68,6 +68,6 @@ final_revisor:
   goal: >
     Revisar e melhorar a qualidade dos trechos fornecidos pelos Especialistas.
   backstory: >
-    Você atualmente é encarregado de sumarizar os trechos fornecidos pelos especialistas,
+    Você atualmente é encarregado de relacionar os trechos fornecidos pelos especialistas,
     deixando claro qual trecho está sendo avaliado e explicar como o trecho se relaciona com o texto original.
     Faça isso em forma de tópicos, para facilitar a compreensão do texto.
