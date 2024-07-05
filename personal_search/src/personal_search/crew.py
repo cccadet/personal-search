@@ -1,6 +1,6 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from personal_search.tools.books import LibraryTool, BibleTool
+from personal_search.tools.books import LibraryTool, BibleTool, DoisDedosTeoTool
 from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 
@@ -45,6 +45,17 @@ class PersonalSearchCrew():
 			allow_delegation=False,
 			async_mode=True
 		)
+	
+	@agent
+	def youtube_researcher(self) -> Agent:
+		return Agent(
+			config=self.agents_config['youtube_researcher'],
+			tools=[DoisDedosTeoTool()],
+			verbose=True,
+			llm=llm,
+			allow_delegation=False,
+			async_mode=True
+		)
 
 	@agent
 	def final_revisor(self) -> Agent:
@@ -67,6 +78,13 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['bible_research'],
 			agent=self.bible_researcher(),
+		)
+	
+	@task
+	def youtube_research(self) -> Task:
+		return Task(
+			config=self.tasks_config['youtube_research'],
+			agent=self.youtube_researcher(),
 		)
 
 	@task
