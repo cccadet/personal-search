@@ -1,70 +1,57 @@
-# Personal Search
+# PersonalSearch Crew
 
-<br>
-🚧 under construction
-<br><br>
+Welcome to the PersonalSearch Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
 
-## 📋 Description
+## Installation
 
-Personal project with the objective of training the development and use of LLM in conjunction with documents. The examples used in the developments are books linked to religion.
+Ensure you have Python >=3.10 <=3.13 installed on your system. This project uses [Poetry](https://python-poetry.org/) for dependency management and package handling, offering a seamless setup and execution experience.
 
-General idea of the project:
-
-Topic >> Books Search >> Commentaries about the books >> Bible Search >> Commentaries about the Bible >> Final Awsers
-
-
-## Summary
-
-- [Description](#description)
-- [Folder Structure](#folder-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [License](#license)
-- [Folder Structure](#folder-structure)
-
-## 🔧 Installation
-
-### Requirements
-
-- Ollama
-    - nomic-embed-text:v1.5
-- OpenAi API Key or Ollama Model
-- Python >= 3.12
-- Crew Ai
-- Streamlit
-- Langchain
-
-## Usage
+First, if you haven't already, install Poetry:
 
 ```bash
-# Clone this repository
-$ git clone
-cd personal-search
-# Install dependencies
-$ pip install -r requirements.txt
-# Import the data
-python ingestion/ingestion.py
-# Run the application
-streamlit run crew-ai-book-search.py 
+pip install poetry
 ```
 
-## 📄 License
+Next, navigate to your project directory and install the dependencies:
 
-## Folder Structure
-
+1. First lock the dependencies and then install them:
+```bash
+poetry lock
 ```
-archived:       old files
-assets:         images, videos, etc.
-ingestion:      data ingestion
-search:         search functions
-vectore-store:  vector store data
+```bash
+poetry install
+```
+### Customizing
+
+**Add your `OPENAI_API_KEY` into the `.env` file**
+
+- Modify `src/personal_search/config/agents.yaml` to define your agents
+- Modify `src/personal_search/config/tasks.yaml` to define your tasks
+- Modify `src/personal_search/crew.py` to add your own logic, tools and specific args
+- Modify `src/personal_search/main.py` to add custom inputs for your agents and tasks
+
+## Running the Project
+
+To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
+
+```bash
+poetry run personal_search
 ```
 
+This command initializes the personal-search Crew, assembling the agents and assigning them tasks as defined in your configuration.
 
-Projeto pessoal com obejtivo de treinar o desenvolvimento e uso de LLM em conjunto com documentos. Os exemplos utilizados no desenvolvimentos são livros ligados a religião.
+This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
 
+## Understanding Your Crew
 
+The personal-search Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
 
-https://github.com/iuricode/padroes-de-commits
+## Support
 
-https://gist.github.com/lohhans/f8da0b147550df3f96914d3797e9fb89
+For support, questions, or feedback regarding the PersonalSearch Crew or crewAI.
+- Visit our [documentation](https://docs.crewai.com)
+- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
+- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
+- [Chat with our docs](https://chatg.pt/DWjSBZn)
+
+Let's create wonders together with the power and simplicity of crewAI.

@@ -1,0 +1,30 @@
+research:
+  description: >
+    Você é um pesquisador que precisa de trechos de livros 
+    que falem sobre o tópico: {topic}.
+  expected_output: >
+    Trechos de livros que falem sobre o tópico fornecido, com nome do livro e página.
+    Para cada trecho, apresente uma explicação breve da relação com o tópico.
+
+youtube_research:
+  description: >
+    Apresentar as ideias que o vídeo apresenta sobre o tópico: {topic}.
+  expected_output: >
+    Apresentação de forma completa com argumentos usados no vídeo sobre o tópico.
+    Fontes.
+
+final_revision:
+  description: >
+    Tópico: {topic}
+    Sua tarefa é analisar o tópico inicial e selecionar os trechos fornecidos pelos
+    Especialista que tenham relação com o tópico. 
+    Responda em português.
+  expected_output: >
+    Tópico fornecido pelo cliente.
+    Citação do especialista e sua referência.
+    Comentários relacionando o trecho com o tópico fornecido.
+    Transcrições dos vídeos encontrados relacionados ao texto fornecido.
+    Análise detalhada relacionando o tópico original com todo o contexto fornecido.
+
+
+  

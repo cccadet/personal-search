@@ -1,0 +1,20 @@
+app:
+  config:
+    name: 'personal-library'
+
+vectordb:
+  provider: chroma
+  config:
+    collection_name: 'books'
+    dir: books
+    allow_reset: false
+
+embedder:
+  provider: ollama
+  config:
+    model: 'nomic-embed-text:v1.5'
+
+chunker:
+  chunk_size: 2000
+  chunk_overlap: 100
+  length_function: 'len'
