@@ -2,5 +2,5 @@
 *.pyc
 images/
 vector-store/faiss/books/*
-youtube/chroma.sqlite3
-books/chroma.sqlite3
+youtube/
+books/
