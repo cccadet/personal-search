@@ -15,7 +15,7 @@ class PersonalSearchCrew():
 		return Agent(
 			config=self.agents_config['researcher'],
 			tools=[LibraryTool()],
-			verbose=True,
+			verbose=False,
 			llm=llm,
     		allow_delegation=False
 		)
@@ -24,7 +24,7 @@ class PersonalSearchCrew():
 	def final_revisor(self) -> Agent:
 		return Agent(
 			config=self.agents_config['final_revisor'],
-			verbose=True,
+			verbose=False,
 			llm=llm,
     		allow_delegation=False,
 		)
@@ -52,6 +52,7 @@ class PersonalSearchCrew():
 			process=Process.sequential,
 			verbose=2,
 			llm=llm,
+			#full_output=True,
 			#manager_agent=manager,
 			#process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)

@@ -1,27 +1,33 @@
 research:
   description: >
-    Buscar e citar livros de forma resumida. Apresente as ideias que estejam diretamente relacionada 
-    ao tópico: {topic}.
+    Usar todas as ferramentas disponíveis para encontrar informações sobre o tópico: {topic}.
   expected_output: >
-    Citação dos livros encontrados com trecho do livro, nome do livro, autor e página.
-    Apresentação dos argumentos encontrados sobre o tópico. Caso não exista relação apenas informe 
-    que não há relação.
-
-youtube_research:
-  description: >
-    Apresentar as ideias que o vídeo apresenta sobre o tópico: {topic}.
-  expected_output: >
-    Apresentação de forma completa com argumentos usados no vídeo sobre o tópico, com as 
-    devidas fontes. Caso não exista relação apenas informe que não há relação.
+    Uma análise teológica completa sobre o tópico, com as devidas fontes. É importante que a análise tenha os
+    seguintes pontos:
+    - {topic}
+    - Classificação do tópico (Texto Bíblico, Tema, Dourtina, etc)
+    - Como o tópico é tratado na Bíblia
+    - Existem textos relacionados ao tópico. Caso seja um texto bíblico, exitem outros textos que falam sobre o mesmo assunto?
+    - Contexto histórico
+    - Análise hermenêutica
+    - Difículdaes de interpretação
+    - Aplicações práticas
+    - Fontes
 
 final_revision:
   description: >
-    Julgar se a saída dos especialistas está correta e se está falando diretamente do tópico.
+    Avaliar se todos os pontos da pesquisa foram abordados e se a análise está correta. Os pontos são:
+    - {topic}
+    - Classificação do tópico (Texto Bíblico, Tema, Dourtina, etc)
+    - Como o tópico é tratado na Bíblia
+    - Existem textos relacionados ao tópico. Caso seja um texto bíblico, exitem outros textos que falam sobre o mesmo assunto?
+    - Contexto histórico
+    - Análise hermenêutica
+    - Difículdaes de interpretação
+    - Aplicações práticas
+    - Fontes
   expected_output: >
-    Tópico: {topic}
-    Avalie se a saída dos especialistas está correta e se está falando diretamente do tópico. Se
-    estiver correta e falando diretamente do tópico, apresente a saída. Caso contrário, informe que
-    não há relação.
+    Uma análise teológica completa sobre o tópico, com as devidas fontes, com as devidas correções e melhorias, se necessários.
 
 
   
