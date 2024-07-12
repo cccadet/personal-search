@@ -1,33 +1,66 @@
-research:
+topic_in_bible:
   description: >
-    Usar todas as ferramentas disponíveis para encontrar informações sobre o tópico: {topic}.
+    Tópico: {topic}
+    
+    Realize uma pesquisa abrangente sobre o tópico informado, abordando os seguintes aspectos:
+    - **Texto bíblico:** O tópico é mencionado diretamente nas Escrituras? Se sim, onde?
+    - **Tratamento na Bíblia:** Como o tópico é tratado na Bíblia? Descreva os contextos e interpretações bíblicas principais.
+    - **Textos relacionados:** Existem outros textos bíblicos relacionados ao tópico? Caso sim, quais são e como complementam o entendimento do tópico?
+    - **Contexto histórico e cultural:** Qual é o contexto histórico e cultural do tópico?
+    - **Fontes:** Cite todas as fontes utilizadas para a pesquisa, incluindo nome do livro, autor, página, e link do site, se aplicável.
+    
+    A pesquisa deve ser clara, objetiva e embasada em fontes confiáveis. Utilize um estilo acadêmico e inclua citações e referências onde necessário.
   expected_output: >
-    Uma análise teológica completa sobre o tópico, com as devidas fontes. É importante que a análise tenha os
-    seguintes pontos:
-    - {topic}
-    - Classificação do tópico (Texto Bíblico, Tema, Dourtina, etc)
-    - Como o tópico é tratado na Bíblia
-    - Existem textos relacionados ao tópico. Caso seja um texto bíblico, exitem outros textos que falam sobre o mesmo assunto?
-    - Contexto histórico
-    - Análise hermenêutica
-    - Difículdaes de interpretação
-    - Aplicações práticas
-    - Fontes
+    Uma análise bíblica completa sobre o tópico, com um mínimo de 1500 palavras, que aborde todos os aspectos mencionados.
+    O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
 
-final_revision:
+
+historical_context:
   description: >
-    Avaliar se todos os pontos da pesquisa foram abordados e se a análise está correta. Os pontos são:
-    - {topic}
-    - Classificação do tópico (Texto Bíblico, Tema, Dourtina, etc)
-    - Como o tópico é tratado na Bíblia
-    - Existem textos relacionados ao tópico. Caso seja um texto bíblico, exitem outros textos que falam sobre o mesmo assunto?
-    - Contexto histórico
-    - Análise hermenêutica
-    - Difículdaes de interpretação
-    - Aplicações práticas
-    - Fontes
+    Tópico: {topic}
+    
+    Realize uma pesquisa abrangente sobre o contexto histórico bíblico do tópico informado, abordando os seguintes aspectos:
+    - **Período histórico:** Em que período histórico o tópico está inserido? Descreva os principais eventos e características desse período.
+    - **Localização geográfica:** Onde o tópico está localizado geograficamente? Descreva as características geográficas e sua importância.
+    - **Contexto político:** Qual é o contexto político do tópico? Inclua informações sobre governantes, políticas e conflitos relevantes.
+    - **Contexto social:** Qual é o contexto social do tópico? Descreva as estruturas sociais, classes e dinâmicas sociais.
+    - **Contexto religioso:** Qual é o contexto religioso do tópico? Inclua informações sobre práticas religiosas, influências e conflitos religiosos.
+    - **Fontes:** Cite todas as fontes utilizadas para a pesquisa, incluindo nome do livro, autor, página, e link do site, se aplicável.
+    
+    A pesquisa deve ser clara, objetiva e embasada em fontes confiáveis. Utilize um estilo acadêmico e inclua citações e referências onde necessário.
   expected_output: >
-    Uma análise teológica completa sobre o tópico, com as devidas fontes, com as devidas correções e melhorias, se necessários.
+    Uma análise completa sobre o contexto histórico do tópico, com um mínimo de 1500 palavras, que aborde todos os aspectos mencionados.
+    O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
+
+hermeneutical_analysis:
+  description: >
+    Tópico: {topic}
+    
+    Realize uma análise hermenêutica abrangente sobre o tópico informado, abordando os seguintes aspectos:
+    - **Principais interpretações:** Quais são as interpretações predominantes e divergentes do texto?
+    - **Dificuldades de interpretação:** Quais são os desafios e ambiguidades na interpretação do tópico?
+    - **Análise das línguas originais:** Quais são as nuances e significados específicos nas línguas originais (hebraico, aramaico e grego)?
+    - **Contexto histórico e cultural:** Como o contexto histórico e cultural influencia a interpretação do texto?
+    - **Fontes:** Cite todas as fontes utilizadas para a pesquisa, incluindo nome do livro, autor, página, e link do site, se aplicável.
+    
+    A análise deve ser clara, objetiva e embasada em fontes confiáveis. Utilize um estilo acadêmico e inclua citações e referências onde necessário.
+  expected_output: >
+    Uma análise hermenêutica completa sobre o tópico, com um mínimo de 1500 palavras, que aborde todos os aspectos mencionados.
+    O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
 
 
-  
+revision:
+  description: >
+    Com base no contexto recebido, revise e estruture uma análise completa e detalhada sobre o tópico informado,
+    abordando os seguintes aspectos:
+    - **Classificação:** Classificação do tópico (Texto Bíblico, Tema, Doutrina, etc).
+    - **Tópico na Bíblia:** Como o tópico é tratado na Bíblia? Inclua referências bíblicas relevantes.
+    - **Contexto histórico:** Descreva o contexto histórico do tópico, incluindo informações geográficas, políticas, sociais e religiosas.
+    - **Análise hermenêutica:** Realize uma análise hermenêutica detalhada do tópico, abordando interpretações principais e dificuldades.
+    - **Aplicações práticas:** Explique como o tópico pode ser aplicado na vida prática ou no contexto teológico moderno.
+    - **Fontes:** Cite todas as fontes utilizadas para a pesquisa, incluindo nome do livro, autor, página e link do site, se aplicável.
+    
+    A análise deve ser clara, objetiva e embasada em fontes confiáveis. Utilize um estilo acadêmico e inclua citações e referências onde necessário.
+  expected_output: >
+    Uma análise completa, detalhada e aprofundada sobre o tópico, com um mínimo de 2000 palavras, que aborde todos os aspectos mencionados.
+    O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.

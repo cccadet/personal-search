@@ -4,6 +4,7 @@ This module contains the tools for searching books and videos on Youtube.
 
 from crewai_tools import BaseTool
 from embedchain import App
+from dotenv import load_dotenv
 
 def clean_result(result):
     result_clean = ""

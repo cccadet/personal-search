@@ -4,6 +4,7 @@ This script ingest data from PDF files and Youtube channels.
 
 import os
 from embedchain import App
+from dotenv import load_dotenv
 
 # load chroma configuration from yaml file
 app = App.from_config(config_path="ingestion/books.yaml")
