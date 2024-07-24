@@ -14,6 +14,21 @@ topic_in_bible:
     Uma análise bíblica completa sobre o tópico, com um mínimo de 1500 palavras, que aborde todos os aspectos mencionados.
     O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
 
+topic_in_books:
+  description: >
+    Tópico: {topic}
+    
+    Realize uma pesquisa em livros passando o tópico na íntegra, buscando responder os seguintes aspectos:
+    - **Presença em livros:** O tópico é mencionado em algum livro relevante? Se sim, quais são esses livros e como eles abordam o tópico?
+    - **Citação do trecho:** Forneça a citação do livro na íntegra retornada pela pesquisa de livros. Não elabore.
+    - **Tratamento literário:** Como o tópico é tratado nos livros encontrados? Descreva os principais temas, abordagens e interpretações literárias.
+    - **Fontes:** Cite todas as fontes utilizadas para a pesquisa, incluindo nome do livro, autor, página e link do site, se aplicável.
+    
+    A pesquisa deve ser clara, objetiva e embasada em fontes confiáveis. Utilize um estilo acadêmico e inclua citações e referências onde necessário.
+  expected_output: >
+    Uma análise completa sobre o tópico, com um mínimo de 1000 palavras, que aborde todos os aspectos mencionados.
+    O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
+
 
 historical_context:
   description: >
@@ -55,6 +70,7 @@ revision:
     abordando os seguintes aspectos:
     - **Classificação:** Classificação do tópico (Texto Bíblico, Tema, Doutrina, etc).
     - **Tópico na Bíblia:** Como o tópico é tratado na Bíblia? Inclua referências bíblicas relevantes.
+    - **Tópico em livros:** Como o tópico é tratado em livros? Inclua citações e referências literárias.
     - **Contexto histórico:** Descreva o contexto histórico do tópico, incluindo informações geográficas, políticas, sociais e religiosas.
     - **Análise hermenêutica:** Realize uma análise hermenêutica detalhada do tópico, abordando interpretações principais e dificuldades.
     - **Aplicações práticas:** Explique como o tópico pode ser aplicado na vida prática ou no contexto teológico moderno.

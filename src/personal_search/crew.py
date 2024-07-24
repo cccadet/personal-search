@@ -4,8 +4,22 @@ from crewai_tools import SerperDevTool
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from personal_search.tools.books import LibraryTool
-#llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
-llm = ChatOpenAI(model='gpt-4o', temperature=0)
+from langchain_groq import ChatGroq
+from langchain_community.llms import Ollama
+
+load_dotenv()
+
+#llm = Ollama(
+#	temperature=0,
+#	model="llama3.1",
+#)
+
+#llm = ChatGroq(
+#    temperature=0,
+#    model="llama-3.1-70b-versatile",
+#)
+llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
+#llm = ChatOpenAI(model='gpt-4o-mini', temperature=0)
 
 from pydantic import BaseModel, Field
 from typing import List
@@ -17,6 +31,15 @@ class TopicoNaBiblia(BaseModel):
 	versiculo_principal: str = Field(..., description="Versículo principal do tópico")
 	versiculos_relacionados: List[str] = Field(..., description="Versículos relacionados ao tópico")
 	como_tratado: str = Field(..., description="Como o tópico é tratado na Bíblia")
+	fontes: List[str] = Field(..., description="Fontes do tópico")
+
+class TopicoEmLivros(BaseModel):
+	"""Modelo de Tópico em Livros"""
+	titulo: str = Field(..., description="Título do tópico")
+	encontrado: bool = Field(..., description="O tópico foi encontrado em livros?")
+	livros: List[str] = Field(..., description="Livros que tratam do tópico")
+	citacoes: List[str] = Field(..., description="Citações de livros sobre o tópico")
+	tratamento: str = Field(..., description="Como o tópico é tratado nos livros")
 	fontes: List[str] = Field(..., description="Fontes do tópico")
 
 class ContextoHistorico(BaseModel):
@@ -44,6 +67,7 @@ class AnaliseTeologica(BaseModel):
 	titulo: str = Field(..., description="Título do tópico")
 	classificacao: str = Field(..., description="Classificação do tópico (Texto Bíblico, Tema, Dourtina, etc)")
 	topico_na_biblia: List[str] = Field(..., description="Explica como o tópico é tratado na Bíblia")
+	topico_em_livros: List[str] = Field(..., description="Explica como o tópico é tratado em livros")
 	contexto_historico: str = Field(..., description="Contexto histórico completo do tópico")
 	analise_hermeneutica: str = Field(..., description="Como o tópico é interpretado hermeneuticamente")
 	aplicacoes_praticas: List[str] = Field(..., description="Quais as aplicações práticas do tópico")
@@ -63,6 +87,17 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
     		allow_delegation=False,
+			memory=False
+		)
+	
+	@agent
+	def book_researcher(self) -> Agent:
+		return Agent(
+			config=self.agents_config['book_researcher'],
+			tools=[LibraryTool()],
+			verbose=True,
+			llm=llm,
+			allow_delegation=False,
 			memory=False
 		)
 	
@@ -107,6 +142,14 @@ class PersonalSearchCrew():
 		)
 	
 	@task
+	def topic_in_books(self) -> Task:
+		return Task(
+			config=self.tasks_config['topic_in_books'],
+			agent=self.book_researcher(),
+			output_pydantic=TopicoEmLivros
+		)
+	
+	@task
 	def historical_context(self) -> Task:
 		return Task(
 			config=self.tasks_config['historical_context'],
@@ -127,7 +170,7 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['revision'],
 			agent=self.revisor(),
-			context=[self.topic_in_bible(), self.historical_context(), self.hermeneutical_analysis()],
+			context=[self.topic_in_bible(), self.topic_in_books(), self.historical_context(), self.hermeneutical_analysis()],
 			output_pydantic=AnaliseTeologica
 		)
 
@@ -141,6 +184,7 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
 			full_output=True,
+			#planning=True,
 			#manager_agent=manager,
 			#process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)
