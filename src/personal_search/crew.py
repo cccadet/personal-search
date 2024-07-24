@@ -1,3 +1,4 @@
+import os
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import SerperDevTool
@@ -9,16 +10,13 @@ from langchain_community.llms import Ollama
 
 load_dotenv()
 
-#llm = Ollama(
-#	temperature=0,
-#	model="llama3.1",
-#)
+model_name = os.environ.get("OPENAI_MODEL_NAME")
+print(f"Using model: {model_name}")
+llm = ChatOpenAI(model=model_name, temperature=0)
 
-#llm = ChatGroq(
-#    temperature=0,
-#    model="llama-3.1-70b-versatile",
-#)
-llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
+#llm = ChatGroq(model="llama-3.1-70b-versatile",temperature=0)
+#llm = Ollama(model="llama3.1", temperature=0)
+#llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 #llm = ChatOpenAI(model='gpt-4o-mini', temperature=0)
 #llm = ChatOpenAI(model='gpt-4o', temperature=0)
 
@@ -181,7 +179,14 @@ class PersonalSearchCrew():
 			llm=llm,
 			full_output=True,
 			memory=True,
-			#planning=True,
+			planning=True,
+			embedder={
+				"provider": "ollama",
+				"config":{
+					"model": "nomic-embed-text:v1.5",
+					"vector_dimension": 1024
+				}
+			}
 			#manager_agent=manager,
 			#process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)
