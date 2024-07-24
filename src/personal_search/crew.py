@@ -20,6 +20,7 @@ load_dotenv()
 #)
 llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 #llm = ChatOpenAI(model='gpt-4o-mini', temperature=0)
+#llm = ChatOpenAI(model='gpt-4o', temperature=0)
 
 from pydantic import BaseModel, Field
 from typing import List
@@ -87,7 +88,6 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
     		allow_delegation=False,
-			memory=False
 		)
 	
 	@agent
@@ -98,7 +98,6 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
 			allow_delegation=False,
-			memory=False
 		)
 	
 	@agent
@@ -109,7 +108,6 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
 			allow_delegation=False,
-			memory=False
 		)
 	
 	@agent
@@ -120,7 +118,6 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
 			allow_delegation=False,
-			memory=False
 		)
 	
 	@agent
@@ -130,7 +127,6 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
     		allow_delegation=False,
-			memory=False
 		)
 
 	@task
@@ -184,6 +180,7 @@ class PersonalSearchCrew():
 			verbose=True,
 			llm=llm,
 			full_output=True,
+			memory=True,
 			#planning=True,
 			#manager_agent=manager,
 			#process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
