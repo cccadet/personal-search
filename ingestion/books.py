@@ -3,8 +3,10 @@ This script ingest data from PDF files and Youtube channels.
 """
 
 import os
-from embedchain import App
+from mem0 import App
 from dotenv import load_dotenv
+
+load_dotenv()
 
 # load chroma configuration from yaml file
 app = App.from_config(config_path="ingestion/books.yaml")
@@ -17,5 +19,3 @@ for path in paths:
 
     for pdf in pdfs:
         app.add(os.path.join(path, pdf), data_type='pdf_file')
-        
-

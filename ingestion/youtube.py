@@ -2,8 +2,10 @@
 This script ingest data from PDF files and Youtube channels. 
 """
 
-from embedchain import App
+from mem0 import App
 from dotenv import load_dotenv
+
+load_dotenv()
 
 app = App.from_config(config_path="ingestion/youtube.yaml")
 
