@@ -5,3 +5,4 @@ vector-store/faiss/books/*
 youtube/
 books/
 .env
+books2/

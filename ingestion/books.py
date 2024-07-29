@@ -3,7 +3,7 @@ This script ingest data from PDF files and Youtube channels.
 """
 
 import os
-from mem0 import App
+from embedchain import App
 from dotenv import load_dotenv
 
 load_dotenv()

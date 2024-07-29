@@ -1,6 +1,0 @@
-{
-    "CodeGPT.Autocomplete.maxTokens": 500,
-    "CodeGPT.Autocomplete.suggestionDelay": 550,
-    "CodeGPT.Autocomplete.enabled": true,
-    "CodeGPT.Autocomplete.provider": "Ollama - codegemma:instruct"
-}

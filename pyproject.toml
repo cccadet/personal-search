@@ -8,8 +8,10 @@ authors = ["Cristian C Dos Santos <perestra.ccds@gmail.com>"]
 python = ">=3.10,<=3.13"
 crewai = { extras = ["tools"], version = "*" }
 langchain_openai = "*"
-langchain_groq = "*"
+langchain_huggingface = "*"
 ollama = "*"
+youtube-transcript-api = "*"
+neo4j = "*"
 
 
 [tool.poetry.scripts]

@@ -46,7 +46,7 @@ class YoutubeTool(BaseTool):
     )
 
     def _run(self, topic: str) -> str:
-        app = App.from_config(config_path="ingestion/youtube.yaml")
+        app = App.from_config(config_path="ingestion/youtube_video.yaml")
 
         result = app.search(query=topic)
         result = clean_youtube_result(result)

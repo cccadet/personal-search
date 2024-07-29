@@ -29,6 +29,19 @@ topic_in_books:
     Uma análise completa sobre o tópico, com um mínimo de 1000 palavras, que aborde todos os aspectos mencionados.
     O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
 
+topic_in_youtube:
+  description: >
+    Tópico: {topic}
+    
+    Realize uma pesquisa no YouTube passando o tópico na íntegra, buscando responder os seguintes aspectos:
+    - **Presença em vídeos:** O tópico é mencionado em algum vídeo relevante? Se sim, quais são esses vídeos e como eles abordam o tópico?
+    - **Citação do trecho:** Forneça a descrição do vídeo na íntegra retornada pela pesquisa do YouTube. Não elabore.
+    - **Fontes:** Cite todas as fontes utilizadas para a pesquisa, incluindo título do vídeo, autor/canal, data de publicação e link do vídeo, se aplicável.
+    
+    A pesquisa deve ser clara, objetiva e embasada em fontes confiáveis. Utilize um estilo acadêmico e inclua citações e referências onde necessário.
+  expected_output: >
+    Uma análise completa sobre o tópico, com um mínimo de 1000 palavras, que aborde todos os aspectos mencionados.
+    O texto deve ser escrito em português e formatado de maneira acadêmica, incluindo citações e uma lista de referências no final.
 
 historical_context:
   description: >
