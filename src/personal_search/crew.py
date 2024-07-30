@@ -132,7 +132,8 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['topic_in_bible'],
 			agent=self.biblical_researcher(),
-			output_pydantic=TopicoNaBiblia
+			output_file='topic_in_bible.md',
+			#output_pydantic=TopicoNaBiblia
 		)
 	
 	@task
@@ -140,7 +141,8 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['topic_in_books'],
 			agent=self.book_researcher(),
-			output_pydantic=TopicoEmLivros
+			output_file='topic_in_books.md',
+			#output_pydantic=TopicoEmLivros,
 		)
 	
 	@task
@@ -148,7 +150,8 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['historical_context'],
 			agent=self.historian(),
-			output_pydantic=ContextoHistorico
+			output_file='historical_context.md',
+			#output_pydantic=ContextoHistorico,
 		)
 	
 	@task
@@ -156,7 +159,8 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['hermeneutical_analysis'],
 			agent=self.hermeneutics_expert(),
-			output_pydantic=AnaliseHermeneutica
+			output_file='hermeneutical_analysis.md',
+			#output_pydantic=AnaliseHermeneutica,
 		)
 	
 	@task
@@ -164,8 +168,9 @@ class PersonalSearchCrew():
 		return Task(
 			config=self.tasks_config['revision'],
 			agent=self.revisor(),
+			output_file='report.md',
 			context=[self.topic_in_bible(), self.topic_in_books(), self.historical_context(), self.hermeneutical_analysis()],
-			output_pydantic=AnaliseTeologica
+			#output_pydantic=AnaliseTeologica
 		)
 
 	@crew
@@ -186,7 +191,8 @@ class PersonalSearchCrew():
 					"model": "nomic-embed-text:v1.5",
 					"vector_dimension": 1024
 				}
-			}
+			},
+			output_log_file="run.log",
 			#manager_agent=manager,
 			#process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)
